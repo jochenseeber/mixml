@@ -4,17 +4,23 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'mixml/version'
 
 Gem::Specification.new do |spec|
-    spec.name          = 'mixml'
-    spec.version       = Mixml::VERSION
-    spec.authors       = ['Jochen Seeber']
-    spec.email         = ['jochen@seeber.me']
-    spec.summary       = 'XML tool to easily manipulate multiple XML files at once'
-    spec.description   = 'XML tool to easily manipulate multiple XML files at once'
-    spec.homepage      = 'http://www.noussommesdesoles.net'
-    spec.license       = 'AGPL-3.0'
+    spec.name = 'mixml'
+    spec.version = Mixml::VERSION
+    spec.authors = ['Jochen Seeber']
+    spec.email = ['jochen@seeber.me']
+    spec.summary = 'XML tool to easily manipulate multiple XML files at once'
+    spec.description = 'XML tool to easily manipulate multiple XML files at once'
+    spec.homepage = 'https://github.com/jochenseeber/mixml'
+    spec.license = 'AGPL-3.0'
+    spec.metadata = {
+        'issue_tracker' => 'https://github.com/jochenseeber/mixml/issues',
+        'source_code' => 'https://github.com/jochenseeber/mixml',
+        'documentation' => 'https://github.com/jochenseeber/mixml',
+        'wiki' => 'https://github.com/jochenseeber/mixml/wiki'
+    }
 
-    spec.files         = Dir['lib/**/*.rb']
-    spec.executables   = ['mixml']
+    spec.files = Dir['lib/**/*.rb']
+    spec.executables = ['mixml']
     spec.require_paths = ['lib']
 
     spec.add_dependency 'commander', '~> 4.2'
