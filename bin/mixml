@@ -1,0 +1,78 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'bundler/setup'
+require 'commander/import'
+require 'mixml'
+
+program :name, 'mixml'
+program :version, Mixml::VERSION
+program :description, 'XML helper tool'
+
+$tool = Mixml::Tool.new
+
+global_option('-p', '--pretty', 'Pretty print output') do |value|
+    $tool.pretty = value
+end
+
+global_option('-i', '--inplace', 'Replace the processed files with the new files') do |value|
+    $tool.save = value
+end
+
+command :pretty do |c|
+    c.description = 'Pretty print XML files'
+    c.action do |args, options|
+        $tool.pretty = true
+        $tool.work(args)
+    end
+end
+
+command :remove do |c|
+    c.description = 'Remove nodes from the XML documents'
+    c.option '-x', '--xpath STRING', String, 'XPath for nodes to delete'
+    c.action do |args, options|
+        $tool.work(args) do
+            xpath options.xpath do
+                remove
+            end
+        end
+    end
+end
+
+command :replace do |c|
+    c.description = 'Replace nodes from the XML documents'
+    c.option '-x', '--xpath STRING', String, 'XPath for nodes to replace'
+    c.option '-t', '--template STRING', String, 'Template to generate the replacement value'
+    c.action do |args, options|
+        $tool.work(args) do
+            xpath options.xpath do
+                replace template options.template
+            end
+        end
+    end
+end
+
+command :value do |c|
+    c.description = 'Set node values'
+    c.option '-x', '--xpath STRING', String, 'XPath for nodes to change'
+    c.option '-t', '--template STRING', String, 'Template to generate the replacement value'
+    c.action do |args, options|
+        $tool.work(args) do
+            xpath options.xpath do
+                value template options.template
+            end
+        end
+    end
+end
+
+command :execute do |c|
+    c.description = 'Execute script on the XML documents'
+    c.option '-s', '--script STRING', String, 'Script file to execute'
+    c.option '-e', '--expression STRING', String, 'Command to execute'
+    c.action do |args, options|
+        script = options.expression || File.read(options.script)
+
+        $tool.work(args) do
+            execute(script)
+        end
+    end
+end
