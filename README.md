@@ -1,12 +1,13 @@
 # mixml
 
 Mixml is a small tool to greatly simplify the tedious task of changing multiple multiple XML files at once. Its main
-purpose is to spare me from using XSLT. You can use mixml to change XML files in the following ways:
+purpose is to spare me from having to use XSLT ever again. You can use mixml to change XML files in the following ways:
 
   * Pretty print
   * Remove nodes
-  * Rename nodes
+  * Add nodes
   * Replace nodes
+  * Rename nodes
   * Change node values
 
 For example, the following command will remove all attributes named `id` from the supplied XML files:
@@ -95,7 +96,8 @@ Script commands:
 
     xpath 'xpath-expression' do
         remove # Remove node
-        replace 'text' # Replace node
+        replace 'xml' # Replace node
+        append 'xml'
         value 'text' # Set node value
         rename 'text' # Rename node
     end
@@ -116,6 +118,14 @@ In addition, you can also use [Nokogiri](http://http://nokogiri.org/)'s
         replace xml do |node, xml|
             xml.addressbook(:name => node['name'])
         end
+    end
+
+### Use CSS rules to select nodes
+
+You can also use CSS rules instead of XPath expressions to select the nodes to process:
+
+    css 'addresses:first-child', 'addresses:last-child' do
+        remove
     end
 
 ### Evaluate an expression
@@ -142,7 +152,7 @@ To pretty print the output, use the `pretty` option:
 ## Contributing
 
 1. Fork the GitHub repository: [https://github.com/jochenseeber/mixml/fork](https://github.com/jochenseeber/mixml/fork)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
 5. Create a new Pull Request

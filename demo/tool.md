@@ -128,7 +128,7 @@ expression and then replace each element.
         </list>
     }
 
-This works for all commands that take a string parameter.
+This works for all commands that take XML text as parameter (e.g. replace and append).
 
 ## Append nodes
 
