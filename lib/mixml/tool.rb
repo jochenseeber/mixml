@@ -4,20 +4,44 @@ require 'mixml/template/template'
 require 'docile'
 require 'nokogiri'
 
+# Mixml main module
 module Mixml
+    # Mixml tool
+    #
+    # This is the main class for using mixml.
     class Tool
+        # @return [Array<Document>] loaded XML Documents
         attr_reader :documents
+
+        # @return [Boolean] pretty print XML during output
         attr_accessor :pretty
+
+        # @return [Boolean] save processed XML documents, defaults to false
         attr_accessor :save
+
+        # @return [Boolean] print processed XML documents, defaults to true
+        attr_accessor :print
+
+        # @return [Integer] indent width, defaults to 4
         attr_accessor :indent
 
-        def initialize
+        # Intialize a new mixml tool
+        def initialize(&block)
             @indent = 4
             @pretty = false
             @save = false
+            @print = true
             @documents = []
+
+            if block_given? then
+                yield self
+            end
         end
 
+        # Load XML files
+        #
+        # @param file_names [Array] Names of the XML files to load
+        # @return [void]
         def load(*file_names)
             file_names.flatten.each do |file_name|
                 xml = File.open(file_name, 'r') do |file|
@@ -31,6 +55,11 @@ module Mixml
             end
         end
 
+        # Save all loaded XML files
+        #
+        # Pretty prints the XML if {#pretty} is enabled.
+        #
+        # @return [void]
         def save_all
             options = {}
 
@@ -45,6 +74,12 @@ module Mixml
             end
         end
 
+        # Print all loaded XML files
+        #
+        # Pretty prints the XML if {#pretty} is enabled. If more than one file is loaded, a header with the file's name
+        # is printed before each file.
+        #
+        # @return [void]
         def print_all
             options = {}
 
@@ -62,20 +97,43 @@ module Mixml
             end
         end
 
+        # Remove all loaded XML files
+        #
+        # Files are not saved before removing them.
+        #
+        # @return [void]
         def remove_all
             @documents = []
         end
 
+        # Print/save all loaded XML files and then remove them
+        #
+        # Files are saved if {#save} is enabled, and they are printed to the console if {#print} is enabled.
+        #
+        # @return [void]
         def flush
+            if @print then
+                print_all
+            end
+
             if @save then
                 save_all
-            else
-                print_all
             end
 
             remove_all
         end
 
+        # Perform work on a list of XML files
+        #
+        # Perform the following steps:
+        # #. Remove all loaded XML files without saving them
+        # #. Load the supplied XML files
+        # #. Execute the supplied block
+        # #. Flush all XML files
+        #
+        # @param file_names [Array] Names of the XML files to load
+        # @yield Block to execute with loaded XML files
+        # @return [void]
         def work(*file_names, &block)
             remove_all
 
@@ -90,12 +148,23 @@ module Mixml
             flush
         end
 
+        # Execute a block for each loaded XML document
+        #
+        # @yield Block to execute for each XML document
+        # @yieldparam xml {Nokogiri::XML::Document} XML document
+        # @return [void]
         def process
             @documents.each do |document|
                 yield document.xml
             end
         end
 
+        # Select nodes using an XPath expression and execute DSL commands for these nodes
+        #
+        # @param query [String] XPath expression
+        # @yield Block to execute for each nodeset
+        # @yieldparam nodes {Nokogiri::XML::NodeSet} XML nodes to process
+        # @return [void]
         def xpath(query, &block)
             process do |xml|
                 nodes = xml.xpath(query)
@@ -107,10 +176,19 @@ module Mixml
             end
         end
 
+        # Create a DSL replacement template
+        #
+        # @param text [String] Template text
+        # @return [Template] Replacement template
         def template(text)
-            Template::Template.new(text)
+            Template::Expression.new(text)
         end
 
+        # Execute a script or a block
+        #
+        # @param program [String] DSL script to execute
+        # @yield Block to execute
+        # @return [void]
         def execute(program = nil, &block)
             if not program.nil? then
                 instance_eval(program)

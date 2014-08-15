@@ -16,6 +16,7 @@ end
 
 global_option('-i', '--inplace', 'Replace the processed files with the new files') do |value|
     $tool.save = value
+    $tool.print = !value
 end
 
 command :pretty do |c|
@@ -33,6 +34,19 @@ command :remove do |c|
         $tool.work(args) do
             xpath options.xpath do
                 remove
+            end
+        end
+    end
+end
+
+command :replace do |c|
+    c.description = 'Rename nodes in the XML documents'
+    c.option '-x', '--xpath STRING', String, 'XPath for nodes to replace'
+    c.option '-t', '--template STRING', String, 'Template to generate the replacement value'
+    c.action do |args, options|
+        $tool.work(args) do
+            xpath options.xpath do
+                rename template options.template
             end
         end
     end

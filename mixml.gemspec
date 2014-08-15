@@ -1,6 +1,7 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
 require 'mixml/version'
 
 Gem::Specification.new do |spec|
@@ -8,14 +9,14 @@ Gem::Specification.new do |spec|
     spec.version = Mixml::VERSION
     spec.authors = ['Jochen Seeber']
     spec.email = ['jochen@seeber.me']
-    spec.summary = 'XML tool to easily manipulate multiple XML files at once'
-    spec.description = 'XML tool to easily manipulate multiple XML files at once'
+    spec.summary = 'Easily manipulate multiple XML files at once'
+    spec.description = 'Easily manipulate multiple XML files at once'
     spec.homepage = 'https://github.com/jochenseeber/mixml'
     spec.license = 'AGPL-3.0'
     spec.metadata = {
         'issue_tracker' => 'https://github.com/jochenseeber/mixml/issues',
         'source_code' => 'https://github.com/jochenseeber/mixml',
-        'documentation' => 'https://github.com/jochenseeber/mixml',
+        'documentation' => 'http://rubydoc.info/gems/mixml/frames',
         'wiki' => 'https://github.com/jochenseeber/mixml/wiki'
     }
 
@@ -31,4 +32,7 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency 'bundler', '~> 1.6'
     spec.add_development_dependency 'rake'
     spec.add_development_dependency 'qed', '~> 2.9'
+    spec.add_development_dependency 'rspec-expectations', '~> 3.0'
+    spec.add_development_dependency 'rspec-collection_matchers', '~> 1.0'
+    spec.add_development_dependency 'yard', '~> 0.8'
 end

@@ -1,14 +1,24 @@
+require 'mixml/template/base'
+
 module Mixml
     module Template
-        class Text
+        # Ruby string template
+        class Text < Base
+            # @return [String] Template text
             attr_reader :text
 
+            # Initialize a new template
+            #
+            # @param text [String] Template text
             def initialize(text)
-                @text = text
+                @text = '"' << text.gsub('"', '\"') << '"'
             end
 
+            # Evaulate the template using Ruby string interpolation
+            #
+            # @param node [Nokogiri::XML::Node] Current node
             def evaluate(node)
-                @text
+                eval(@text, binding)
             end
         end
     end
