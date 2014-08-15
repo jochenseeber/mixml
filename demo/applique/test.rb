@@ -1,7 +1,10 @@
 require 'fileutils'
 require 'rspec/expectations'
+require 'rspec/collection_matchers'
 require 'equivalent-xml'
 require 'nokogiri'
+
+include RSpec::Matchers
 
 # File with test content
 class TestFile
@@ -17,7 +20,7 @@ class TestFile
 
     # Write text into file
     #
-    # @param test [String] Text to write
+    # @param text [String] Text to write
     # @return [void]
     def <<(text)
         File.open(@file_name, 'w') do |f|
@@ -57,7 +60,7 @@ end
 def redirect
     begin
         old_stdout = $stdout
-        $stdout = StringIO.new('','w')
+        $stdout = StringIO.new('', 'w')
         yield
         $stdout.string
     ensure

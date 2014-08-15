@@ -1,9 +1,9 @@
-# Tool usage
+# Usage examples
 
 ## Setup
 
 First we need to create a new Tool object and load an XML file. We create a Mixml tool object and use a
-[helper](qed://helpers/inout.rb) to load the following XML for each example.
+[helper](applique/test.rb) to load the following XML for each example.
 
     require 'mixml'
 
@@ -62,9 +62,9 @@ Select some elements with an XPath expression and then change the element name.
 
 ## Replace nodes with string interpolation
 
-Ruby [string interpolation](http://en.wikibooks.org/wiki/Ruby_Programming/Syntax/Literals#Interpolation).matches xml performed
-on string parameters, so you can also select some elements with an XPath expression and then change the element name
-using a Ruby expression.
+Ruby [string interpolation](http://en.wikibooks.org/wiki/Ruby_Programming/Syntax/Literals#Interpolation) is performed on
+string parameters, so you can also select some elements with an XPath expression and then change each element using a
+Ruby expression.
 
     @tool.execute do
         xpath '//*[@name = "Hobbes"]' do
@@ -85,11 +85,35 @@ This works for all commands that take a string parameter.
 ## Replace nodes with a template
 
 If you prefer, you can also use template expressions instead of string parameters, so you can also select some elements
-with an XPath expression and then change the element name.
+with an XPath expression and then replace each element.
 
     @tool.execute do
         xpath '//*[@name = "Hobbes"]' do
             replace template '<tiger-and-{=node.name} name="{=node["name"]}"/>'
+        end
+    end
+    @tool.flush
+
+    file('test.xml').matches xml %{
+        <list>
+            <tiger-and-philosopher name="Hobbes"/>
+            <philosopher name="Rawls"/>
+        </list>
+    }
+
+This works for all commands that take a string parameter.
+
+## Replace nodes with XML
+
+If you prefer, you can also use an XML builder to create values using the simple DSL provided by
+[Nokogiri](http://nokogiri.org/Nokogiri/XML/Builder.html). Using this, you can select some elements with an XPath
+expression and then replace each element.
+
+    @tool.execute do
+        xpath '//*[@name = "Hobbes"]' do
+            replace xml do |node, xml|
+                xml.send(:"tiger-and-philosopher", :name => node['name'])
+            end
         end
     end
     @tool.flush
