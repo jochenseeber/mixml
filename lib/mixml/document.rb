@@ -10,7 +10,7 @@ module Mixml
         attr_reader :xml
 
         # @param name [String] Document name
-        # @param name [Nokigiri::XML::Document] XML document
+        # @param xml [Nokigiri::XML::Document] XML document
         def initialize(name, xml)
             @name = name
             @xml = xml

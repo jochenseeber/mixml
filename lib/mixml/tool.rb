@@ -1,6 +1,7 @@
 require 'mixml/selection'
 require 'mixml/document'
-require 'mixml/template/template'
+require 'mixml/template/expression'
+require 'mixml/template/xml'
 require 'docile'
 require 'nokogiri'
 
@@ -182,6 +183,13 @@ module Mixml
         # @return [Template] Replacement template
         def template(text)
             Template::Expression.new(text)
+        end
+
+        # Create a XML replacement template
+        #
+        # @return [Template] Replacement template
+        def xml
+            Template::Xml.new
         end
 
         # Execute a script or a block

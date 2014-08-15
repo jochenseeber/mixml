@@ -1,0 +1,12 @@
+--title 'mixml: Simple XML Manipulation'
+--output-dir doc
+--readme README.md
+--protected
+--private
+bin/mixml
+lib/**/*.rb
+-
+*.md
+*.txt
+demo/**/*.md
+demo/**/*.rb
