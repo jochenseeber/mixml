@@ -52,6 +52,19 @@ command :replace do |c|
     end
 end
 
+command :append do |c|
+    c.description = 'Append child nodes in the XML documents'
+    c.option '-x', '--xpath STRING', String, 'XPath for nodes to append to'
+    c.option '-t', '--template STRING', String, 'Template to generate the nodes to append'
+    c.action do |args, options|
+        $tool.work(args) do
+            xpath options.xpath do
+                append template options.template
+            end
+        end
+    end
+end
+
 command :replace do |c|
     c.description = 'Replace nodes from the XML documents'
     c.option '-x', '--xpath STRING', String, 'XPath for nodes to replace'

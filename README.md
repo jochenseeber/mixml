@@ -68,6 +68,10 @@ Use the following command to get help:
 
     mixml replace --xpath '//addresses' --template '<addressbook/>' *.xml
 
+### Append nodes
+
+    mixml append --xpath '/list' --template '<addressbook/>' *.xml
+
 ### Set node value
 
     mixml value --xpath '//addresses/@name' --template 'default' *.xml
