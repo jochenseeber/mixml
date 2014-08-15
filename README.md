@@ -38,6 +38,10 @@ Use the following command to get help:
 
     mixml remove --xpath '//element' *.xml
 
+### Rename nodes
+
+    mixml rename --xpath '//element' --template '<other/>' *.xml
+
 ### Replace nodes
 
     mixml replace --xpath '//element' --template '<other/>' *.xml
@@ -65,13 +69,20 @@ Script commands:
 
     xpath 'xpath-expression' do
         remove # Remove node
-        replace 'text' # Replace node with text
-        replace template '{=rubyexpression}' # Replace node with a template. Variable node contains the current node.
-        value 'text'
-        value template '{=rubyexpression}' # Replace node with a template. Variable node contains the current node.
+        replace 'text' # Replace node
+        value 'text' # Set node value
+        rename 'text' # Rename node
     end
 
-We use [Erubis](http://www.kuwata-lab.com/erubis) as templating engine, and `{` and `}` as delimiters.
+Instead of using strings for parameters, you can also use a template expression:
+
+    xpath 'xpath-expression' do
+        remove # Remove node
+        rename template 'special-{=node.name}' # Prefix nodes with 'special-''
+    end
+
+This works for all commands that take a string parameter. We use [Erubis](http://www.kuwata-lab.com/erubis) as
+templating engine, and `{` and `}` as delimiters:
 
 ### Evaluate an expression
 

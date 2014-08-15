@@ -2,121 +2,226 @@
 
 ## Setup
 
-First we need to create a new Tool object and load an XML file.
+First we need to create a new Tool object and load an XML file. We create a Mixml tool object and use a
+[helper](qed://helpers/inout.rb) to load the following XML for each example.
 
     require 'mixml'
 
-    def testfile(name)
-        File.join(File.dirname(__FILE__), name)
-    end
+    Before do
+        @tool = Mixml::Tool.new do |t|
+            # Pretty print output
+            t.pretty = true
 
-    def prepare_tool(*files)
-        tool = Mixml::Tool.new
-        tool.pretty = true
-        files.each do |file|
-            tool.load(testfile(file))
+            # Save output after processing
+            t.save = true
         end
-        tool
+
+        # Save test.xml
+        file('test.xml') << %{
+            <list>
+                <philosopher name="Hobbes"/>
+                <philosopher name="Rawls"/>
+            </list>
+        }
+
+        @tool.load('test.xml')
     end
 
 ## Remove nodes
 
 Select some nodes with an XPath expression and then remove them
 
-    prepare_tool('tool-1.xml').execute do
+    @tool.execute do
         xpath '//philosopher' do
             remove
         end
-        print_all
     end
+    @tool.flush
 
-## Replace nodes with text
+    file('test.xml').matches xml %{
+        <list/>
+    }
+
+## Replace nodes
 
 Select some elements with an XPath expression and then change the element name.
 
-    prepare_tool('tool-1.xml').execute do
-        xpath '//philosopher[@name = "Hobbes"]' do
+    @tool.execute do
+        xpath '//*[@name = "Hobbes"]' do
             replace '<tiger name="Hobbes"/>'
         end
-        print_all
     end
+    @tool.flush
+
+    file('test.xml').matches xml %{
+        <list>
+            <tiger name="Hobbes"/>
+            <philosopher name="Rawls"/>
+        </list>
+    }
+
+## Replace nodes with string interpolation
+
+Ruby [string interpolation](http://en.wikibooks.org/wiki/Ruby_Programming/Syntax/Literals#Interpolation).matches xml performed
+on string parameters, so you can also select some elements with an XPath expression and then change the element name
+using a Ruby expression.
+
+    @tool.execute do
+        xpath '//*[@name = "Hobbes"]' do
+            replace '<tiger-and-#{node.name} name="Hobbes"/>'
+        end
+    end
+    @tool.flush
+
+    file('test.xml').matches xml %{
+        <list>
+            <tiger-and-philosopher name="Hobbes"/>
+            <philosopher name="Rawls"/>
+        </list>
+    }
+
+This works for all commands that take a string parameter.
 
 ## Replace nodes with a template
 
-Select some elements with an XPath expression and then change the element name.
+If you prefer, you can also use template expressions instead of string parameters, so you can also select some elements
+with an XPath expression and then change the element name.
 
-    prepare_tool('tool-1.xml').execute do
-        xpath '//philosopher[@name = "Hobbes"]' do
-            replace template '<tiger name="{=node["name"]}"/>'
+    @tool.execute do
+        xpath '//*[@name = "Hobbes"]' do
+            replace template '<tiger-and-{=node.name} name="{=node["name"]}"/>'
         end
-        print_all
     end
+    @tool.flush
 
+    file('test.xml').matches xml %{
+        <list>
+            <tiger-and-philosopher name="Hobbes"/>
+            <philosopher name="Rawls"/>
+        </list>
+    }
 
-## Replace attribute values with text
+This works for all commands that take a string parameter.
+
+## Replace attribute values
 
 Select some attributes with an XPath expression and change their value.
 
-    prepare_tool('tool-1.xml').execute do
+    @tool.execute do
         xpath '//philosopher[1]/@name' do
             value 'Thomas Hobbes'
         end
-        print_all
     end
+    @tool.flush
 
-## Replace attribute values with a template
+    file('test.xml').matches xml %{
+        <list>
+            <philosopher name="Thomas Hobbes"/>
+            <philosopher name="Rawls"/>
+        </list>
+    }
 
-Select some attributes with an XPath expression and change their value using a template-
+## Rename nodes
 
-    prepare_tool('tool-1.xml').execute do
-        xpath '//philosopher[2]/@name' do
-            value template 'John {=node.value}'
+Select some nodes with an XPath expression and change their name.
+
+    @tool.execute do
+        xpath '//philosopher[@name = "Hobbes"]' do
+            rename 'tiger-and-#{node.name}'
         end
-        print_all
     end
+    @tool.flush
+
+    file('test.xml').matches xml %{
+        <list>
+            <tiger-and-philosopher name="Hobbes"/>
+            <philosopher name="Rawls"/>
+        </list>
+    }
 
 ## Evaluate a command string
 
 Evaluate a command string with mixml commands
 
-    prepare_tool('tool-1.xml').execute("xpath('//philosopher') { remove }")
+    @tool.execute("xpath('//philosopher') { remove }")
+    @tool.flush
+
+    file('test.xml').matches xml %{
+        <list/>
+    }
 
 ## Do everything in one step
 
 Load files, modify them and optionally save them again in one step using the `work` method.
 
-    tool = Mixml::Tool.new
-    tool.pretty = true
-    tool.work(testfile('tool-1.xml')) do
+    tool = Mixml::Tool.new do |t|
+        t.pretty = true
+    end
+
+    @tool.work('test.xml') do
         xpath '//philosopher' do
             remove
         end
     end
 
-## Save modified documents
+    expect(@tool.documents).to have(0).items
 
-Load files, modify them and optionally save them again in one step using the `work` method.
+    file('test.xml').matches xml %{
+        <list/>
+    }
 
-    require 'tempfile'
+## Print modified documents without saving
 
-    tool = Mixml::Tool.new
-    tool.pretty = true
-    tool.save = true
-    file = Tempfile.new(['doc', '.xml'])
-    begin
-        FileUtils.cp(testfile('tool-1.xml'), file.path)
-        file.close
-        tool.work(file.path) do
-            xpath '//philosopher' do
-                remove
-            end
+Print files whithout saving them.
+
+    @tool.save = false
+    @tool.print = true
+
+    @tool.execute do
+        xpath '//philosopher' do
+            remove
         end
-    rescue
-        file.close!
     end
 
-## Print headers when procsessing multiple documents
+    @tool.flush
 
-    tool = prepare_tool('tool-1.xml', 'tool-2.xml')
-    tool.pretty = true
-    tool.print_all
+    # Check if file still is unmodified
+    file('test.xml').matches xml %{
+        <list>
+            <philosopher name="Hobbes"/>
+            <philosopher name="Rawls"/>
+        </list>
+    }
+
+## Print headers when processing multiple documents
+
+    text = redirect do
+        file('more.xml') << %{
+            <list>
+                <philosopher name="Kant"/>
+                <philosopher name="Platon"/>
+            </list>
+        }
+
+        @tool.load('more.xml')
+        @tool.print_all
+    end
+
+    expect(text).to match_text(%{
+        --------
+        test.xml
+        --------
+        <?xml version="1.0"?>
+        <list>
+            <philosopher name="Hobbes"/>
+            <philosopher name="Rawls"/>
+        </list>
+        --------
+        more.xml
+        --------
+        <?xml version="1.0"?>
+        <list>
+            <philosopher name="Kant"/>
+            <philosopher name="Platon"/>
+        </list>
+    })
