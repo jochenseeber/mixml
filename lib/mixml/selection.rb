@@ -29,6 +29,18 @@ module Mixml
             end
         end
 
+        # Append children to node
+        #
+        # @param template [Template::Base] Template to replace nodes with
+        def append(template = nil, &block)
+            template = template.to_mixml_template
+
+            @nodes.each do |node|
+                value = template.evaluate(node, &block)
+                node << value
+            end
+        end
+
         # Set the value selected nodes with a template
         #
         # @param template [Template::Base] Template to set the value

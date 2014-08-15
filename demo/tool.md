@@ -14,6 +14,9 @@ First we need to create a new Tool object and load an XML file. We create a Mixm
 
             # Save output after processing
             t.save = true
+
+            # Don't print documents after processing
+            t.print = false
         end
 
         # Save test.xml
@@ -126,6 +129,25 @@ expression and then replace each element.
     }
 
 This works for all commands that take a string parameter.
+
+## Append nodes
+
+Select some elements with an XPath expression and then append children to them.
+
+    @tool.execute do
+        xpath '/list' do
+            append '<tiger name="Hobbes"/>'
+        end
+    end
+    @tool.flush
+
+    file('test.xml').matches xml %{
+        <list>
+            <tiger name="Hobbes"/>
+            <philosopher name="Rawls"/>
+            <philosopher name="Hobbes"/>
+        </list>
+    }
 
 ## Replace attribute values
 
