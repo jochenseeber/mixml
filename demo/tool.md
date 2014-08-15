@@ -174,6 +174,19 @@ Evaluate a command string with mixml commands
         <list/>
     }
 
+## Select nodes using CSS rules
+
+You can also use CSS rules to select the nodes to process
+
+    @tool.execute("css('philosopher:first-child') { remove }")
+    @tool.flush
+
+    file('test.xml').matches xml %{
+        <list>
+            <philosopher name="Rawls"/>
+        </list>
+    }
+
 ## Do everything in one step
 
 Load files, modify them and optionally save them again in one step using the `work` method.

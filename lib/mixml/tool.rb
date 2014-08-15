@@ -177,6 +177,23 @@ module Mixml
             end
         end
 
+        # Select nodes using CSS selectors and execute DSL commands for these nodes
+        #
+        # @param selectors [String] CSS selectors
+        # @yield Block to execute for each nodeset
+        # @yieldparam nodes {Nokogiri::XML::NodeSet} XML nodes to process
+        # @return [void]
+        def css(*selectors, &block)
+            process do |xml|
+                nodes = xml.css(*selectors)
+                selection = Selection.new(nodes)
+
+                if block_given? then
+                    Docile.dsl_eval(selection, &block)
+                end
+            end
+        end
+
         # Create a DSL replacement template
         #
         # @param text [String] Template text
