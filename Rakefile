@@ -6,6 +6,4 @@ task :test do
     sh "qed -v -p coverage"
 end
 
-YARD::Rake::YardocTask.new(name = :doc) do |t|
-    t.files = ['lib/**/*.rb', 'bin']
-end
+YARD::Rake::YardocTask.new(name = :doc)
