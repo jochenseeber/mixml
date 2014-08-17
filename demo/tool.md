@@ -87,8 +87,9 @@ This works for all commands that take a string parameter.
 
 ## Replace nodes with a template
 
-If you prefer, you can also use template expressions instead of string parameters, so you can also select some elements
-with an XPath expression and then replace each element.
+If you prefer, you can also use template expressions instead of string parameters. Mixml uses
+[Erubis](http://www.kuwata-lab.com/erubis) as templating engine, and `{` and `}` as delimiters. With this, you can
+select some elements with an XPath expression and then replace each element.
 
     @tool.execute do
         xpath '//*[@name = "Hobbes"]' do
@@ -143,9 +144,9 @@ Select some elements with an XPath expression and then append children to them.
 
     file('test.xml').matches xml %{
         <list>
-            <tiger name="Hobbes"/>
-            <philosopher name="Rawls"/>
             <philosopher name="Hobbes"/>
+            <philosopher name="Rawls"/>
+            <tiger name="Hobbes"/>
         </list>
     }
 

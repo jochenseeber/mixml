@@ -35,7 +35,7 @@ class TestFile
     def matches(object)
         content = File.read(@file_name)
         if object.is_a?(Nokogiri::XML::Document) then
-            expect(content).to be_equivalent_to(object)
+            expect(content).to be_equivalent_to(object).respecting_element_order
         else
             expect(content).to be(object)
         end
