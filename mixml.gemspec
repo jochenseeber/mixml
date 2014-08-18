@@ -35,5 +35,6 @@ Gem::Specification.new do |spec|
     spec.add_development_dependency 'qed', '~> 2.9'
     spec.add_development_dependency 'rspec-expectations', '~> 3.0'
     spec.add_development_dependency 'rspec-collection_matchers', '~> 1.0'
+    spec.add_development_dependency 'equivalent-xml', '~> 0.5'
     spec.add_development_dependency 'yard', '~> 0.8'
 end
