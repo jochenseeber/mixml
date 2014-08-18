@@ -2,6 +2,7 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
+require 'rake'
 require 'mixml/version'
 
 Gem::Specification.new do |spec|
@@ -20,7 +21,7 @@ Gem::Specification.new do |spec|
         'wiki' => 'https://github.com/jochenseeber/mixml/wiki'
     }
 
-    spec.files = Dir['lib/**/*.rb']
+    spec.files = FileList['README.md', 'LICENSE.txt', '.yardopts', 'lib/**/*.rb', 'demo/**/*.{md,rb}'].to_a
     spec.executables = ['mixml']
     spec.require_paths = ['lib']
 
