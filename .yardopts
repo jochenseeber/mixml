@@ -1,8 +1,6 @@
 --title 'mixml: Simple XML Manipulation'
 --output-dir doc
 --readme README.md
---protected
---private
 bin/mixml
 lib/**/*.rb
 -
@@ -10,3 +8,4 @@ lib/**/*.rb
 *.txt
 demo/**/*.md
 demo/**/*.rb
+LICENSE.txt
