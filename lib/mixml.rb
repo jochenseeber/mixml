@@ -1,2 +1,6 @@
 require 'mixml/version'
 require 'mixml/tool'
+require 'mixml/selection'
+require 'mixml/template/text'
+require 'mixml/template/expression'
+require 'mixml/template/xml'

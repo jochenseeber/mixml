@@ -237,13 +237,21 @@ Print files whithout saving them.
     @tool.save = false
     @tool.print = true
 
-    @tool.execute do
-        xpath '//philosopher' do
-            remove
+    text = redirect do
+        @tool.execute do
+            xpath '//philosopher' do
+                remove
+            end
         end
+
+        @tool.flush
     end
 
-    @tool.flush
+    # Check output
+    expect(text).to match_text(%{
+        <?xml version="1.0"?>
+        <list/>
+    })
 
     # Check if file still is unmodified
     file('test.xml').matches xml %{
