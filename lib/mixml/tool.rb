@@ -140,13 +140,14 @@ module Mixml
 
             file_names.each do |file_name|
                 load(file_name)
-            end
 
-            if not block.nil? then
-                execute(&block)
-            end
+                if not block.nil? then
+                    execute(&block)
+                end
 
-            flush
+                flush
+                remove_all
+            end
         end
 
         # Execute a block for each loaded XML document
