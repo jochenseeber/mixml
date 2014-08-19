@@ -1,5 +1,9 @@
 # mixml
 
+[![Gem Version](https://badge.fury.io/rb/mixml.png)](http://badge.fury.io/rb/mixml)
+[![Build Status](https://travis-ci.org/jochenseeber/mixml.png?branch=master)](https://travis-ci.org/jochenseeber/mixml)
+[![Coverage Status](https://coveralls.io/repos/jochenseeber/mixml/badge.png?branch=master)](https://coveralls.io/r/jochenseeber/mixml?branch=master)
+
 Mixml is a small tool to greatly simplify the tedious task of changing multiple multiple XML files at once. Its main
 purpose is to spare me from having to use XSLT ever again. You can use mixml to change XML files in the following ways:
 
