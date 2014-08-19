@@ -1,4 +1,4 @@
 module Mixml
     # Current version
-    VERSION = '0.0.4-dev'
+    VERSION = '0.9'
 end

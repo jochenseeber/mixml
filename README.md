@@ -126,9 +126,9 @@ In addition, you can also use [Nokogiri](http://http://nokogiri.org/)'s
 [builder component](http://nokogiri.org/Nokogiri/XML/Builder.html) to create the XML that replaces an element:
 
     xpath '//addresses' do
-        replace xml do |node, xml|
+        replace xml ->(node, xml) {
             xml.addressbook(:name => node['name'])
-        end
+        }
     end
 
 ### Use CSS rules to select nodes
