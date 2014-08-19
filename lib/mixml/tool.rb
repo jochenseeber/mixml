@@ -162,36 +162,40 @@ module Mixml
 
         # Select nodes using an XPath expression and execute DSL commands for these nodes
         #
-        # @param query [String] XPath expression
+        # @param paths [Array<String>] XPath expression
         # @yield Block to execute for each nodeset
-        # @yieldparam nodes {Nokogiri::XML::NodeSet} XML nodes to process
         # @return [void]
-        def xpath(query, &block)
+        def xpath(*paths, &block)
+            nodesets = []
             process do |xml|
-                nodes = xml.xpath(query)
-                selection = Selection.new(nodes)
-
-                if block_given? then
-                    Docile.dsl_eval(selection, &block)
-                end
+                nodesets << xml.xpath(*paths)
             end
+            selection = Selection.new(nodesets)
+
+            if block_given? then
+                Docile.dsl_eval(selection, &block)
+            end
+
+            selection
         end
 
         # Select nodes using CSS selectors and execute DSL commands for these nodes
         #
-        # @param selectors [String] CSS selectors
+        # @param selectors [Array<String>] CSS selectors
         # @yield Block to execute for each nodeset
-        # @yieldparam nodes {Nokogiri::XML::NodeSet} XML nodes to process
         # @return [void]
         def css(*selectors, &block)
+            nodesets = []
             process do |xml|
-                nodes = xml.css(*selectors)
-                selection = Selection.new(nodes)
-
-                if block_given? then
-                    Docile.dsl_eval(selection, &block)
-                end
+                nodesets << xml.css(*selectors)
             end
+            selection = Selection.new(nodesets)
+
+            if block_given? then
+                Docile.dsl_eval(selection, &block)
+            end
+
+            selection
         end
 
         # Create a DSL replacement template
@@ -205,8 +209,9 @@ module Mixml
         # Create a XML replacement template
         #
         # @return [Template] Replacement template
-        def xml
-            Template::Xml.new
+        # @param proc [Proc] Lambda to create XML
+        def xml(proc)
+            Template::Xml.new(proc)
         end
 
         # Execute a script or a block
@@ -223,5 +228,30 @@ module Mixml
                 Docile.dsl_eval(self, &block)
             end
         end
+
+        # Execute block for each node
+        #
+        # @param selection [Selection] Selected nodes
+        # @yield Block to execute for each node
+        # @yieldparam node [Nokogiri::XML::Node] Current node
+        def node(selection)
+            selection.nodesets.each do |nodeset|
+                nodeset.each do |node|
+                    yield node
+                end
+            end
+        end
+
+        # Execute block for each node set
+        #
+        # @param selection [Selection] Selected nodes
+        # @yield Block to execute for each node set
+        # @yieldparam node [Nokogiri::XML::NodeSet] Current node set
+        def nodes(selection, &block)
+            selection.nodesets.each do |nodeset|
+                yield nodeset
+            end
+        end
+
     end
 end

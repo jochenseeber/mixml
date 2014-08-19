@@ -115,8 +115,47 @@ expression and then replace each element.
 
     @tool.execute do
         xpath '//*[@name = "Hobbes"]' do
-            replace xml do |node, xml|
+            replace xml ->(node, xml) {
                 xml.send(:"tiger-and-philosopher", :name => node['name'])
+            }
+        end
+    end
+    @tool.flush
+
+    file('test.xml').matches xml %{
+        <list>
+            <tiger-and-philosopher name="Hobbes"/>
+            <philosopher name="Rawls"/>
+        </list>
+    }
+
+This works for all commands that take XML text as parameter (e.g. replace and append).
+
+## Replace nodes with Ruby
+
+If you prefer, you can also use plain Ruby code to create values. with this, you can select some elements with an XPath
+expression and then replace each element.
+
+    @tool.execute do
+        node xpath '//*[@name = "Hobbes"]' do |node|
+            node.name = "tiger-and-#{node.name}"
+        end
+    end
+    @tool.flush
+
+    file('test.xml').matches xml %{
+        <list>
+            <tiger-and-philosopher name="Hobbes"/>
+            <philosopher name="Rawls"/>
+        </list>
+    }
+
+Instead of processing each node individually, you can also process the selected node sets.
+
+    @tool.execute do
+        nodes xpath('//*[@name = "Hobbes"]') do |nodeset|
+            nodeset.each do |node|
+                node.name = "tiger-and-#{node.name}"
             end
         end
     end

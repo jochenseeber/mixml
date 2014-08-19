@@ -39,6 +39,13 @@ You can also use mixml directly in your Ruby code:
         end
     end
 
+Mixml supports building replacement values using
+
+  * [Ruby string interpolation](http://en.wikibooks.org/wiki/Ruby_Programming/Syntax/Literals#Interpolation)
+  * [Erubis templates](http://www.kuwata-lab.com/erubis/)
+  * [Nokogiri's XML DSL](http://nokogiri.org/Nokogiri/XML/Builder.html)
+  * Plain Ruby
+
 You can find more usage examples [here](demo/tool.md).
 
 ## Installation
