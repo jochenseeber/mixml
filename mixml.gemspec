@@ -24,6 +24,8 @@ Gem::Specification.new do |spec|
     spec.executables = ['mixml']
     spec.require_paths = ['lib']
 
+    spec.required_ruby_version = '>= 1.9'
+
     spec.add_dependency 'commander', '~> 4.2'
     spec.add_dependency 'nokogiri', '~> 1.6'
     spec.add_dependency 'erubis', '~> 2.7'
