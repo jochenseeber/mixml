@@ -11,6 +11,8 @@ module Mixml
             #
             # @param text [String] Template text
             def initialize(text)
+                raise(ArgumentError, 'Text must not be nil.') if text.nil?
+
                 @text = '"' << text.gsub('"', '\"') << '"'
             end
 

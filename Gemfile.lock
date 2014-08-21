@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mixml (0.9.1)
+    mixml (0.9.2)
       commander (~> 4.2)
       docile (~> 1.1)
       erubis (~> 2.7)
@@ -10,6 +10,8 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    ae (1.8.2)
+      ansi
     ansi (1.4.3)
     brass (1.2.1)
     commander (4.2.0)
@@ -62,6 +64,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  ae (~> 1.8)
   bundler (~> 1.6)
   coveralls (~> 0.7)
   equivalent-xml (~> 0.5)

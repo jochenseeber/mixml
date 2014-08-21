@@ -2,6 +2,7 @@ require 'mixml/selection'
 require 'mixml/document'
 require 'mixml/template/expression'
 require 'mixml/template/xml'
+require 'mixml/template/text'
 require 'docile'
 require 'nokogiri'
 
@@ -27,16 +28,12 @@ module Mixml
         attr_accessor :indent
 
         # Intialize a new mixml tool
-        def initialize(&block)
+        def initialize
             @indent = 4
             @pretty = false
             @save = false
             @print = true
             @documents = []
-
-            if block_given? then
-                yield self
-            end
         end
 
         # Load XML files
@@ -56,12 +53,11 @@ module Mixml
             end
         end
 
-        # Save all loaded XML files
+        # Output all loaded XML files
         #
-        # Pretty prints the XML if {#pretty} is enabled.
-        #
-        # @return [void]
-        def save_all
+        # @yield Block to write each document
+        # @yieldparam document [Document] Document to write
+        def output_all
             options = {}
 
             if @pretty then
@@ -69,6 +65,17 @@ module Mixml
             end
 
             @documents.each do |document|
+                yield document, options
+            end
+        end
+
+        # Save all loaded XML files
+        #
+        # Pretty prints the XML if {#pretty} is enabled.
+        #
+        # @return [void]
+        def save_all
+            output_all do |document, options|
                 File.open(document.name, 'w') do |file|
                     document.xml.write_xml_to(file, options)
                 end
@@ -82,13 +89,7 @@ module Mixml
         #
         # @return [void]
         def print_all
-            options = {}
-
-            if @pretty then
-                options[:indent] = @indent
-            end
-
-            @documents.each do |document|
+            output_all do |document, options|
                 if @documents.size > 1 then
                     puts '-' * document.name.length
                     puts document.name
@@ -235,7 +236,7 @@ module Mixml
         # @param selection [Selection] Selected nodes
         # @yield Block to execute for each node
         # @yieldparam node [Nokogiri::XML::Node] Current node
-        def node(selection)
+        def with_nodes(selection)
             selection.nodesets.each do |nodeset|
                 nodeset.each do |node|
                     yield node
@@ -248,7 +249,7 @@ module Mixml
         # @param selection [Selection] Selected nodes
         # @yield Block to execute for each node set
         # @yieldparam node [Nokogiri::XML::NodeSet] Current node set
-        def nodes(selection, &block)
+        def with_nodesets(selection, &block)
             selection.nodesets.each do |nodeset|
                 yield nodeset
             end

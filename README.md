@@ -3,9 +3,14 @@
 [![Gem Version](https://badge.fury.io/rb/mixml.png)](http://badge.fury.io/rb/mixml)
 [![Build Status](https://travis-ci.org/jochenseeber/mixml.png?branch=master)](https://travis-ci.org/jochenseeber/mixml)
 [![Coverage Status](https://coveralls.io/repos/jochenseeber/mixml/badge.png?branch=master)](https://coveralls.io/r/jochenseeber/mixml?branch=master)
+[![Inline docs](http://inch-ci.org/github/jochenseeber/mixml.png?branch=master)](http://inch-ci.org/github/jochenseeber/mixml)
 
-Mixml is a small tool to greatly simplify the tedious task of changing multiple multiple XML files at once. Its main
-purpose is to spare me from having to use XSLT ever again. You can use mixml to change XML files in the following ways:
+Mixml is a small tool to greatly simplify the tedious task of changing multiple XML files at once. Its main purpose is
+to spare me from having to use XSLT ever again.
+
+## Usage
+
+You can use mixml to change XML files in the following ways:
 
   * Pretty print
   * Remove nodes
@@ -14,12 +19,30 @@ purpose is to spare me from having to use XSLT ever again. You can use mixml to 
   * Rename nodes
   * Change node values
 
-For example, the following command will remove all attributes named `id` from the supplied XML files:
+For example, the following command will remove all attributes named `id` from the all XML files in the current
+directory.
 
     mixml remove --inplace --xpath '//@id' *.xml
 
-Mixml also supports a simple DSL to perform scripted changes. To perform the same as above using a script, save the
-following in `test.mixml`:
+The following command will pretty print all XML files:
+
+    mixml pretty --inplace *.xml
+
+You can find a description of all supported commands and usage examples [here](demo/application_commands.md).
+
+## Selection
+
+In addition to using XPath expressions, you can also use CSS rules to select the nodes you want to process. For
+example, the following command will remove the first child of each element:
+
+    mixml remove --inplace --css '*:first-child' *.xml
+
+You can find a detailed description and usage examples [here](demo/application_selection.md).
+
+## Scripts
+
+In addition to the command line, mixml also supports a simple simple DSL to perform scripted changes. For example, to
+perform the same as above using a script, save the following in `test.mixml`:
 
     xpath '//@id' do
         remove
@@ -29,136 +52,29 @@ and then call:
 
     mixml execute --script test.mixml *.xml
 
-You can also use mixml directly in your Ruby code:
+You can also use mixml directly in your Ruby code. See [here](demo/application_invocation.md) for usage examples.
 
-    require 'mixml'
+## Values
 
-    tool = Mixml::Tool.new do |t|
-        t.save = true
-    end
-
-    tool.work('one.xml', 'two.xml') do
-        xpath '//@id' do
-            remove
-        end
-    end
-
-Mixml supports building replacement values using
+Mixml supports specifying XML fragments that are to be inserted using
 
   * [Ruby string interpolation](http://en.wikibooks.org/wiki/Ruby_Programming/Syntax/Literals#Interpolation)
   * [Erubis templates](http://www.kuwata-lab.com/erubis/)
   * [Nokogiri's XML DSL](http://nokogiri.org/Nokogiri/XML/Builder.html)
   * Plain Ruby
 
-You can find more usage examples [here](demo/tool.md).
+See [here](demo/application_values.md) for a description of all methods and detailed usage examples.
+
+## Output
+
+XML output can be printed to the console or written back to the file it was read from. Mixml also supports pretty
+printing all output. See [here](demo/application_output.md) for a detailed description and usage examples.
 
 ## Installation
 
 Install mixml:
 
     $ gem install mixml
-
-## Usage
-
-Use the following command to get help:
-
-    mixml --help
-
-### Pretty print XML
-
-    mixml pretty *.xml
-
-### Remove nodes
-
-    mixml remove --xpath '//addresses' *.xml
-
-### Rename nodes
-
-    mixml rename --xpath '//addresses' --template 'addressbook' *.xml
-
-### Replace nodes
-
-    mixml replace --xpath '//addresses' --template '<addressbook/>' *.xml
-
-### Append nodes
-
-    mixml append --xpath '/list' --template '<addressbook/>' *.xml
-
-### Set node value
-
-    mixml value --xpath '//addresses/@name' --template 'default' *.xml
-
-### Execute a script
-
-Example script in `test.mixml`
-
-    xpath '//addresses[name="default"]' do
-        remove
-    end
-    xpath '//addresses' do
-        replace template '<addressbook/>'
-    end
-
-Use the following command to run the script
-
-    mixml execute --script test.mixml *.xml
-
-Script commands:
-
-    xpath 'xpath-expression' do
-        remove # Remove node
-        replace 'xml' # Replace node
-        append 'xml'
-        value 'text' # Set node value
-        rename 'text' # Rename node
-    end
-
-Instead of using strings for parameters, you can also use a template expression:
-
-    xpath 'xpath-expression' do
-        replace template 'special-{=node.name}' # Prefix nodes with 'special-''
-    end
-
-This works for all commands that take a string parameter. We use [Erubis](http://www.kuwata-lab.com/erubis) as
-templating engine, and `{` and `}` as delimiters.
-
-In addition, you can also use [Nokogiri](http://http://nokogiri.org/)'s
-[builder component](http://nokogiri.org/Nokogiri/XML/Builder.html) to create the XML that replaces an element:
-
-    xpath '//addresses' do
-        replace xml ->(node, xml) {
-            xml.addressbook(:name => node['name'])
-        }
-    end
-
-### Use CSS rules to select nodes
-
-You can also use CSS rules instead of XPath expressions to select the nodes to process:
-
-    css 'addresses:first-child', 'addresses:last-child' do
-        remove
-    end
-
-### Evaluate an expression
-
-You can also pass the script to execute directly to mixml:
-
-    mixml execute --expression 'xpath("//addresses") { remove }' *.xml
-
-### Write results
-
-The standard setting is to leave the input files unchanged and print the resulting files. You can replace the input
-files with the changed XML by using the `inplace` option:
-
-    mixml remove --inplace --xpath '//addresses' test.xml
-
-This will remove all elements named `group` from `test.xml`.
-
-### Pretty print results
-
-To pretty print the output, use the `pretty` option:
-
-    mixml remove --inplace --xpath '//addresses' --pretty test.xml
 
 ## Contributing
 

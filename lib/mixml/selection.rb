@@ -7,6 +7,8 @@ module Mixml
         # @return [Nokogiri::XML::NodeSet] Selected nodes
         attr_reader :nodesets
 
+        # Initialize a new selection
+        #
         # @param nodesets [Array<Nokogiri::XML::NodeSet>] Selected nodes
         def initialize(nodesets)
             @nodesets = nodesets
