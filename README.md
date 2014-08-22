@@ -13,6 +13,7 @@ to spare me from having to use XSLT ever again.
 You can use mixml to change XML files in the following ways:
 
   * Pretty print
+  * Print selected nodes and attributes to the console
   * Remove nodes
   * Add nodes
   * Replace nodes
@@ -27,6 +28,10 @@ directory.
 The following command will pretty print all XML files:
 
     mixml pretty --inplace *.xml
+
+The following command will print all attribute names and values:
+
+    mixml write --xpath '//@*' --template '{=node.name}={=node.value}' test.xml
 
 You can find a description of all supported commands and usage examples [here](demo/application_commands.md).
 

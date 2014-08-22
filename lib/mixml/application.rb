@@ -9,6 +9,9 @@ module Mixml
 
         # Command that selects nodes
         class SelectCommand < Commander::Command
+            # @return [Boolean] Suppress automatic output of result
+            attr_accessor :suppress_output
+
             # Initialize a new command
             #
             # @param method [Symbol] Command method
@@ -31,25 +34,49 @@ module Mixml
                     }
                 end
 
-                when_called self, :perform
+                when_called self, :execute
             end
 
             # Run the command
             #
             # @param args [Array<String>] Arguments from the command line
             # @param options [Commander::Command::Options] Options from the command line
-            def perform(args, options)
+            def execute(args, options)
+                before args, options
+
+                if @suppress_output then
+                    $tool.print = false
+                    $tool.save = false
+                end
+
                 $tool.work(args) do
                     @selectors.each do |selector|
                         selection = instance_eval(&selector)
-                        selection.send name
+                        selection.send name, *parameters
                     end
                 end
+            end
+
+            # Parameters for command execution
+            #
+            # @return [Array] Parameters
+            def parameters
+                []
+            end
+
+            # Invoked before the command is executed
+            #
+            # @param args [Array<String>] Arguments from the command line
+            # @param options [Commander::Command::Options] Options from the command line
+            def before(args, options)
             end
         end
 
         # Command that selects and modifies nodes
         class ModifyCommand < SelectCommand
+            # @return [Boolean] Supplying an expression is optional
+            attr_accessor :optional_expression
+
             # Initialize a new command
             #
             # @param method [Symbol] Command method
@@ -58,6 +85,7 @@ module Mixml
                 super(method, args)
 
                 @template = nil
+                @optional_expression = false
 
                 option '-s', '--string STRING', String, 'String value' do |value|
                     raise SystemExit, 'Value already specified. Please use --string or --template only once.' unless @template.nil?
@@ -70,15 +98,16 @@ module Mixml
                 end
             end
 
-            def perform(args, options)
-                raise SystemExit, 'Please specify a value with --string or --template.' if @template.nil?
-
-                $tool.work(args) do
-                    @selectors.each do |selector|
-                        selection = instance_eval(&selector)
-                        selection.send name, @template
-                    end
+            # Check if an expression is set
+            def before(args, options)
+                if not @optional_expression and @template.nil? then
+                    raise SystemExit, 'Please specify a value with --string or --template.'
                 end
+            end
+
+            # Return the template as parameter
+            def parameters
+                [@template]
             end
         end
 
@@ -115,12 +144,22 @@ module Mixml
                 $tool.print = !value
             end
 
+            global_option('-q', '--quiet', 'Do not print nodes') do |value|
+                $tool.print = !value
+            end
+
             command :pretty do |c|
                 c.description = 'Pretty print XML files'
                 c.action do |args, options|
                     $tool.pretty = true
                     $tool.work(args)
                 end
+            end
+
+            modify_command :write do |c|
+                c.description = 'Write selected nodes to the console'
+                c.suppress_output = true
+                c.optional_expression = true
             end
 
             select_command :remove do |c|

@@ -20,8 +20,8 @@ Executing mixml to modify documents with multiple value types fails:
 
     # mixml rename --xpath '//philosopher' --string 'tiger' --template 'scholar'
 
-## Command without selector fails
+## Command without value fails
 
 Executing mixml to modify documents without a selector fails:
 
-    # mixml rename --string 'tiger'
+    # mixml rename --xpath '//philosopher'

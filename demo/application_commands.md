@@ -22,6 +22,44 @@ This produces the following text output:
         <philosopher name="Rawls"/>
     </list>
 
+## Write nodes
+
+You can use mixml to print selected nodes from your XML documents.
+
+Let's use the following XML in file `test.xml`:
+
+    <list>
+        <philosopher name="Hobbes"/>
+        <philosopher name="Rawls"/>
+    </list>
+
+Now execute the following command to select some nodes and remove them:
+
+    # mixml write --quiet --xpath '//philosopher/@name' test.xml
+
+This produces the following text output:
+
+    name="Hobbes"
+    name="Rawls"
+
+You can also supply an expression that used to create the output:
+
+Let's use the following XML in file `test.xml`:
+
+    <list>
+        <philosopher name="Hobbes"/>
+        <philosopher name="Rawls"/>
+    </list>
+
+Now execute the following command to select some nodes and remove them:
+
+    # mixml write --quiet --xpath '//philosopher/@name' --template '{=node.name}={=node.value}' test.xml
+
+This produces the following text output:
+
+    name=Hobbes
+    name=Rawls
+
 ## Remove nodes
 
 You can use mixml to remove nodes from your XML documents.

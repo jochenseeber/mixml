@@ -16,8 +16,26 @@ module Mixml
 
         # Remove selected nodes from the document
         def remove
-            each_node do |nodeset|
-                nodeset.remove
+            each_node do |node|
+                node.remove
+            end
+        end
+
+        # Print selected nodes to stdout
+        #
+        # @param template [Template::Base] Template to evaluate and print
+        def write(template = nil)
+            if not template.nil? then
+                template = template.to_mixml_template
+            end
+
+            each_node do |node|
+                if template.nil? then
+                    node.write_xml_to($stdout)
+                    puts
+                else
+                    puts template.evaluate(node)
+                end
             end
         end
 
