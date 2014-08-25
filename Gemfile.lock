@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mixml (0.9.4)
+    mixml (0.9.5)
       commander (~> 4.2)
       docile (~> 1.1)
       erubis (~> 2.7)
@@ -58,7 +58,7 @@ PLATFORMS
 
 DEPENDENCIES
   ae (~> 1.8)
-  bundler (~> 1.6)
+  bundler (~> 1.7)
   coveralls (~> 0.7)
   equivalent-xml (~> 0.5)
   mixml!

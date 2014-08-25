@@ -93,9 +93,13 @@ Just create a tool object, and let it execute a mixml script.
     tool = Mixml::Tool.new
     tool.pretty = true
 
-    tool.work('test.xml') do
-        xpath '//philosopher[@name="Hobbes"]' do
-            rename 'tiger'
+    # Redirect stdout
+    redirect do
+        # Here comes the actual example
+        tool.work('test.xml') do
+            xpath '//philosopher[@name="Hobbes"]' do
+                rename 'tiger'
+            end
         end
     end
 

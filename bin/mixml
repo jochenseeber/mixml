@@ -3,5 +3,5 @@ require 'rubygems'
 require 'bundler/setup'
 require 'mixml/application'
 
-# Run application if we're the main file
-Mixml::Application.new.run if $0 == __FILE__
+# Run application
+Mixml::Application.new.run

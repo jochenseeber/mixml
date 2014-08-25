@@ -20,18 +20,19 @@ Gem::Specification.new do |spec|
         'wiki' => 'https://github.com/jochenseeber/mixml/wiki'
     }
 
-    spec.files = Dir['README.md', 'LICENSE.txt', '.yardopts', 'lib/**/*.rb', 'demo/**/*.{md,rb}']
+    spec.files = Dir['README.md', 'LICENSE.txt', '.yardopts', 'lib/**/*.rb', 'bin/*']
     spec.executables = ['mixml']
     spec.require_paths = ['lib']
+    spec.test_files = Dir['demo/**/*.{md,rb}']
 
-    spec.required_ruby_version = '>= 1.9'
+    spec.required_ruby_version = '>= 1.9.3'
 
     spec.add_dependency 'commander', '~> 4.2'
     spec.add_dependency 'nokogiri', '~> 1.6'
     spec.add_dependency 'erubis', '~> 2.7'
     spec.add_dependency 'docile', '~> 1.1'
 
-    spec.add_development_dependency 'bundler', '~> 1.6'
+    spec.add_development_dependency 'bundler', '~> 1.7'
     spec.add_development_dependency 'rake', '~> 10.3'
     spec.add_development_dependency 'qed', '~> 2.9'
     spec.add_development_dependency 'ae', '~> 1.8'
