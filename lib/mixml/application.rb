@@ -69,6 +69,9 @@ module Mixml
             # @param args [Array<String>] Arguments from the command line
             # @param options [Commander::Command::Options] Options from the command line
             def before(args, options)
+                if @selectors.empty? then
+                    raise SystemExit, 'Please specify the nodes to process with --xpath or --css.'
+                end
             end
         end
 
@@ -100,6 +103,8 @@ module Mixml
 
             # Check if an expression is set
             def before(args, options)
+                super(args, options)
+                
                 if not @optional_expression and @template.nil? then
                     raise SystemExit, 'Please specify a value with --string or --template.'
                 end

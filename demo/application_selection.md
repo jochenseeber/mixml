@@ -24,7 +24,7 @@ This produces the following XML output:
         <philosopher name="Rawls"/>
     </list>
 
-### Select nodes using CSS rules
+## Select nodes using CSS rules
 
 You can also use CSS rules instead of XPath expressions to select the nodes to process.
 

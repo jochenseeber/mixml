@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mixml (0.9.5)
+    mixml (0.9.6)
       commander (~> 4.2)
       docile (~> 1.1)
       erubis (~> 2.7)
